@@ -1,0 +1,81 @@
+#include <Vex.h>
+#include <Adafruit_I2CDevice.h>
+
+
+Vex Robot;
+Adafruit_DCMotor *motorA = Robot.setMotor(1);
+Adafruit_DCMotor *motorB = Robot.setMotor(2);
+
+
+int trigPin = 6;
+int echoPin = 7;
+int number = 0;
+void setup() {
+  // put your setup code here, to run once:
+  Robot.begin();
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(10,OUTPUT);
+  Serial.begin(9600);
+  Serial.print("hello");
+}
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  digitalWrite(10, LOW);
+  Serial.print("Water pump off");
+  movement();
+  movement();
+  movement();
+  movement();
+  movement();
+  movement();  
+  digitalWrite(10, HIGH);
+  Serial.print("Water pump on");
+  movement();
+  movement();
+ 
+}
+
+
+void movement(){
+  Robot.moveTank(motorA,motorB,-100,-100,0.5);
+  //-52,-45
+  if (ultrasonic()<18){
+    if (number %2 == 0){
+      Robot.moveTank(motorA,motorB,50,-48,1.5);
+      Robot.moveTank(motorA,motorB,-50,-50,1);
+      Robot.moveTank(motorA,motorB,50,-48,1.5);
+    }
+    if (number %2 == 1){
+      Robot.moveTank(motorA,motorB,-52,48,1.25);
+      Robot.moveTank(motorA,motorB,-50,-50,1);
+      Robot.moveTank(motorA,motorB,-52,48,1.25);
+  }
+  number +=1;
+  }
+}   
+   
+  
+ 
+int ultrasonic()
+{
+  long duration, distance;
+  digitalWrite(trigPin,HIGH);
+  delayMicroseconds(1000);
+  digitalWrite(trigPin, LOW);
+  duration=pulseIn(echoPin,HIGH);
+  distance =(duration/2)/29.1;
+  Serial.print(distance);
+  Serial.println("cm");
+  return distance;
+}
+  
+  
+
+
+  
+
+
+
